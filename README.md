@@ -95,36 +95,72 @@ php -v
 
 Anota la versión: la necesitas en 1.2.
 
-### 1.2 Documentar tu instalación
+### 1.2 Documentar tu instalación y capturar `phpinfo()`
 
-Edita `evidencias/instalacion.md` y completa **cada campo con información real de tu equipo**. En "Problema encontrado" cuenta, con tus palabras, qué te falló (aunque haya sido pequeño: puerto ocupado, PATH, permisos, etc.) y cómo lo resolviste.
+**a) Completa `evidencias/instalacion.md`.** Ábrelo en VS Code y reemplaza cada `...` con información real de tu equipo. En "Problema encontrado" cuenta, con tus palabras, qué te falló (aunque haya sido pequeño: puerto ocupado, PATH, permisos, etc.) y cómo lo resolviste.
 
-Agrega dos capturas de pantalla (formato PNG) en `evidencias/`:
+**b) Crea una página temporal que muestre la configuración de PHP:**
 
-- `phpinfo.png`: la página de `phpinfo()` abierta en `http://localhost/...` (crea un archivo temporal con `<?php phpinfo();` y **no lo subas** al repositorio).
-- `phpmyadmin.png`: phpMyAdmin (o tu cliente SQL) mostrando tu base de datos `lab8_web` y la tabla `estudiantes` con tu registro.
+1. En VS Code, dentro de tu repositorio (ya movido a `htdocs`), crea un archivo nuevo en la carpeta `public/` llamado **`info.php`**.
+2. Escribe **solo esta línea** y guarda:
+   ```php
+   <?php phpinfo();
+   ```
+3. Abre tu navegador (Chrome, Edge, Firefox) y escribe en la barra de direcciones la URL de ese archivo. Se arma con el nombre de **tu carpeta** dentro de `htdocs`:
+   ```text
+   http://localhost/NOMBRE-DE-TU-CARPETA/public/info.php
+   ```
+   Ejemplo: si tu carpeta es `C:\xampp\htdocs\lab08-php-juan`, la URL es `http://localhost/lab08-php-juan/public/info.php`.
+   Si cambiaste el puerto de Apache, inclúyelo: `http://localhost:8080/lab08-php-juan/public/info.php`.
+   En MAMP: `http://localhost:8888/NOMBRE-DE-TU-CARPETA/public/info.php`.
+4. Debe aparecer una página morada/azul con **"PHP Version 8.x.x"** arriba. Si ves el código en lugar de la página, o un error 404, revisa que Apache esté iniciado y que el nombre de la carpeta en la URL sea exacto.
+5. **Toma una captura de pantalla** (en Windows: tecla `Windows + Shift + S`) donde se vean **la versión de PHP y la barra de direcciones del navegador**. Guárdala como PNG en la carpeta `evidencias/` con el nombre **`phpinfo.png`**.
+6. **Borra `public/info.php`.** Esa página muestra información interna de tu equipo y no debe quedar publicada. (Está incluido en `.gitignore` como protección, pero bórralo igual.)
 
-### 1.3 Crear la base de datos con un script SQL
+### 1.3 Crear la base de datos (script SQL ya preparado)
 
-Escribe **a mano** en `evidencias/base_datos.sql` un script que:
+En este paso **no tienes que aprender SQL todavía**: el script viene casi completo en `evidencias/base_datos.sql`. Tú solo cambias tus datos. Lo verás a fondo en la Unidad de bases de datos.
 
-1. Cree la base de datos `lab8_web` (con `CHARACTER SET utf8mb4`).
-2. Cree la tabla `estudiantes` con estas columnas:
+**a) Abre `evidencias/base_datos.sql` en VS Code.** Verás algo así:
 
-   | Columna | Tipo | Restricciones |
-   |---|---|---|
-   | `id` | INT | clave primaria, auto incremental |
-   | `cedula` | VARCHAR(20) | no nula, única |
-   | `nombre` | VARCHAR(60) | no nula |
-   | `apellido` | VARCHAR(60) | no nula |
-   | `codigo` | VARCHAR(8) | no nula |
-   | `creado_en` | TIMESTAMP | valor por defecto: fecha actual |
+```sql
+DROP DATABASE IF EXISTS lab8_web;
+CREATE DATABASE lab8_web CHARACTER SET utf8mb4;
+USE lab8_web;
 
-3. Inserte **una fila con tus datos**. El valor de `codigo` es tu **código personal** (se calcula en la Etapa 3; por ahora déjalo con un valor temporal y **vuelve a este archivo en el paso 3.4** para corregirlo).
+CREATE TABLE estudiantes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cedula VARCHAR(20) NOT NULL UNIQUE,
+    nombre VARCHAR(60) NOT NULL,
+    apellido VARCHAR(60) NOT NULL,
+    codigo VARCHAR(8) NOT NULL,
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-Ejecuta el script en phpMyAdmin (pestaña SQL) o en la terminal: `mysql -u root -p < evidencias/base_datos.sql`.
+INSERT INTO estudiantes (cedula, nombre, apellido, codigo)
+VALUES ('CAMBIA-TU-CEDULA', 'CAMBIA-TU-NOMBRE', 'CAMBIA-TU-APELLIDO', 'TEMP0000');
+```
 
-📌 `git commit -m "[E1] instalación documentada y script SQL"`
+Qué hace cada bloque: borra la base si ya existía (así puedes ejecutar el script varias veces), crea la base `lab8_web`, crea la tabla `estudiantes` con sus columnas y guarda **una fila con tus datos**.
+
+**b) Reemplaza en la línea del `VALUES`** `CAMBIA-TU-CEDULA`, `CAMBIA-TU-NOMBRE` y `CAMBIA-TU-APELLIDO` por tus datos, **idénticos a los de `estudiante.json`** (la cédula con guiones). **Deja `TEMP0000`** en `codigo`: es un valor temporal que corregirás en el paso 3.4, cuando calcules tu código personal.
+
+**c) Ejecuta el script en phpMyAdmin:**
+
+1. Abre `http://localhost/phpmyadmin` (en MAMP: `http://localhost:8888/phpMyAdmin/`).
+2. Pulsa la pestaña **SQL** (arriba).
+3. Copia **todo** el contenido de `base_datos.sql`, pégalo en el recuadro y pulsa **Continuar** (o **Go**).
+4. Debe aparecer un mensaje verde. En el panel izquierdo verás la base **`lab8_web`**.
+
+Alternativa por terminal (Windows con XAMPP): `C:\xampp\mysql\bin\mysql.exe -u root < evidencias\base_datos.sql` (en PowerShell usa `Get-Content evidencias\base_datos.sql | C:\xampp\mysql\bin\mysql.exe -u root`).
+
+**d) Comprueba y captura `phpmyadmin.png`:**
+
+1. En el panel izquierdo de phpMyAdmin haz clic en **`lab8_web`** y luego en la tabla **`estudiantes`**.
+2. Pulsa la pestaña **Examinar** (Browse). Debes ver **una fila con tus datos**.
+3. Toma una captura de pantalla donde se vea el nombre de la base, el de la tabla y tu fila, y guárdala como **`evidencias/phpmyadmin.png`**.
+
+📌 `git commit -m "[E1] instalación documentada y script SQL"` (incluye `instalacion.md`, `phpinfo.png`, `phpmyadmin.png` y `base_datos.sql`).
 
 ### 1.4 Conectar PHP con la base de datos
 
@@ -259,7 +295,7 @@ Crea además `$nulo = null;` y `$lista = [1, 2, 3];`.
    - `redefinir`: el resultado de intentar **volver a definir** `SEMILLA_LAB8` con otro valor (`@define('SEMILLA_LAB8', 'otra')`). Piensa qué devuelve y por qué.
 
 3. Ejecuta `php public/tipos.php` y verifica que aparece la línea `##JSON##`.
-4. **Vuelve a `evidencias/base_datos.sql`**: el valor de `codigo` en tu `INSERT` debe ser exactamente tu `$codigo`. Vuelve a ejecutar el script (borra primero la base con `DROP DATABASE lab8_web;` si hace falta).
+4. **Vuelve a `evidencias/base_datos.sql`**: cambia `TEMP0000` por tu `$codigo` real (los 8 caracteres que muestra tu script). Guarda y **ejecuta el script completo otra vez en phpMyAdmin** (pestaña SQL; el `DROP DATABASE` del inicio recrea todo limpio). Comprueba en **Examinar** que tu fila ya tiene tu código y **vuelve a tomar `evidencias/phpmyadmin.png`**.
 
 📌 `git commit -m "[E3] tipos, conversiones y salida JSON"`
 
