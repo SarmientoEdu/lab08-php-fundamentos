@@ -50,7 +50,7 @@ Ya conoces Git y GitHub, así que **este laboratorio se entrega con un historial
 ## Etapa 0: Preparar el repositorio (5 min)
 
 1. En GitHub pulsa **Use this template → Create a new repository** y créalo en **tu cuenta** (puede ser público o privado; si es privado, agrega a tu docente como colaborador).
-2. Clónalo en tu equipo. **Si usarás XAMPP/Laragon, clónalo dentro de la carpeta del servidor** (`C:\xampp\htdocs\` en XAMPP) para que Apache lo sirva.
+2. Clónalo en tu equipo, en cualquier carpeta (por ejemplo Documentos). Más adelante, en la Etapa 1, lo moverás a la carpeta del servidor.
 3. Abre `estudiante.json` y completa **tus datos reales** (la cédula exactamente como aparece en tu documento, con guiones):
    ```json
    {
@@ -82,6 +82,8 @@ Instala **un paquete que incluya Apache (o Nginx), PHP 8.1 o superior y MariaDB/
 | Windows | XAMPP (apache friends) o Laragon |
 | macOS | MAMP o XAMPP |
 | Linux | `sudo apt install apache2 php libapache2-mod-php php-mysqli mariadb-server` |
+
+**Mueve tu repositorio a la carpeta que sirve el servidor** (`C:\xampp\htdocs\` en XAMPP, `/opt/lampp/htdocs/` o `/var/www/html/` en Linux, `htdocs` de MAMP en macOS). Basta con cortar y pegar la carpeta completa: Git sigue funcionando igual, porque el historial viaja dentro de `.git`. Desde ahora trabajas y haces commits desde esa nueva ubicación.
 
 Inicia **Apache** y **MySQL/MariaDB** desde el panel de control (o con `systemctl`). Verifica en el navegador que `http://localhost` carga la página de bienvenida.
 
